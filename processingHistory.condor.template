@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+cat <<END
+Universe 		= docker
+should_transfer_files 	= Yes
+docker_image 		= amancevice/pandas
+executable		= /bin/bash
+arguments 		= processingHistory.sh history-${date}.csv
+transfer_input_files	= processingHistory.sh
+output 			= processingHistory.\$(cluster).\$(process).out
+error 			= processingHistory.\$(cluster).\$(process).err
+log 			= processingHistory.\$(cluster).\$(process).log
+queue
+END

@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+cat <<END
+#!/usr/bin/env bash
+cd /cluster/vagrant/_extract/${date}
+time python processingHistory.py \${1}
+END

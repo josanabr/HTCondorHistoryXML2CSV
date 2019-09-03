@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+cat <<END
+JOB flat sFlatCondorXML.condor
+JOB translate _extract.condor
+JOB processing processingHistory.condor
+SCRIPT PRE flat generarHistory.sh _salida.xml history-${date}.xml
+SCRIPT POST translate borrarArchivo.sh history-${date}.tmp
+PARENT flat CHILD translate
+PARENT translate CHILD processing
+END
