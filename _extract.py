@@ -36,6 +36,7 @@ tags=[
 "JobStatus",
 "JobRunCount",
 "MemoryUsage",
+"DockerImage",
 "QDate",
 "CumulativeRemoteUserCpu",
 "TransferInputSizeMB",

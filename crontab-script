@@ -2,8 +2,10 @@
 #CURRENT_DIR=$(pwd)
 CURRENT_DATE=$( date +'%s' )
 CURRENT_DIR="/cluster/condor/vagrant/_extract"
+cd ${CURRENT_DIR}
 LOGFILE="${CURRENT_DIR}/logfile.log"
-echo "[${CURRENT_DATE}] A punto de ejecutar '${CURRENT_DIR}/prepararEntornoExe.sh'" >> ${LOGFILE}
+echo "[${CURRENT_DATE}] $(pwd)" >> ${LOGFILE}
+echo "[${CURRENT_DATE}] A punto de ejecutar '${CURRENT_DIR}/prepararEntornoExe'" >> ${LOGFILE}
 SALIDA=$( ${CURRENT_DIR}/prepararEntornoExe )
 DIR=$(echo ${SALIDA} | cut -d '[' -f 2 | cut -d ']' -f 1)
 echo "[${CURRENT_DATE}] Yendo a directorio ${CURRENT_DIR}/${DIR}" >> ${LOGFILE}
