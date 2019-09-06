@@ -25,23 +25,23 @@ import os.path
 # Tags a recolectar
 tags=[
 "User",
-"ClusterId",
-"ProcId",
-"RemoteWallClockTime",
 "CompletionDate", # Finish date
 "JobCurrentStartDate", # Last run start
+"ClusterId",
+"ProcId",
+#"RemoteWallClockTime",
 "BytesSent",
 "BytesRecvd",
-"DiskUsage_RAW", # KB
+"DiskUsage", # KB
 "JobStatus",
+"LastJobStatus",
+"DiskUsage_RAW", # KB
 "JobRunCount",
 "MemoryUsage",
 "DockerImage",
 "QDate",
 "CumulativeRemoteUserCpu",
-"TransferInputSizeMB",
-"LastJobStatus",
-"DiskUsage" # KB
+"TransferInputSizeMB"
 ]
 
 if len(sys.argv) != 3:
@@ -76,9 +76,15 @@ procId = 0
 bytesSent = 0
 bytesRecv = 0
 diskUsage = 0
-diskUsageRaw = 0
 jobStatus = 0
 lastJobStatus = 0
+diskUsageRaw = 0
+jobRunCount = 0
+memoryUsage = 0
+dockerImage = ""
+QDate = 0
+cumulativeRemoteUserCpu = 0
+transferInputSizeMB = 0
 errorCount = 0
 ignoredTasks = 0
 #
@@ -223,6 +229,60 @@ for event,elem in doc:
             errorCount = errorCount + 1
             print("[%s - %s] ERROR diskUsageRaw %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
             pass
+        if elem.get('n') == 'JobRunCount':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          try: 
+            jobRunCount = int(elem.text)
+          except TypeError:
+            flagOK = False
+            errorCount = errorCount + 1
+            print("[%s - %s] ERROR jobRunCount %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
+            pass
+        if elem.get('n') == 'MemoryUsage':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          try: 
+            memoryUsage = int(elem.text)
+          except TypeError:
+            flagOK = False
+            errorCount = errorCount + 1
+            print("[%s - %s] ERROR memoryUsage %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
+            pass
+        if elem.get('n') == 'DockerImage':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          dockerImage = elem.text
+        if elem.get('n') == 'QDate':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          try: 
+            QDate = int(elem.text)
+          except TypeError:
+            flagOK = False
+            errorCount = errorCount + 1
+            print("[%s - %s] ERROR QDate %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
+            pass
+        if elem.get('n') == 'CumulativeRemoteUserCpu':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          try: 
+            cumulativeRemoteUserCpu = int(elem.text)
+          except TypeError:
+            flagOK = False
+            errorCount = errorCount + 1
+            print("[%s - %s] ERROR cumulativeRemoteUserCpu %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
+            pass
+        if elem.get('n') == 'TransferInputSizeMB':
+          (event, elem) = next(doc)
+          # Al leer el proximo elemento se tiene algo como <i>...</i>
+          try: 
+            transferInputSizeMB = int(elem.text)
+          except TypeError:
+            flagOK = False
+            errorCount = errorCount + 1
+            print("[%s - %s] ERROR transferInputSizeMB %s.%s %s"%(errorCount,numTasks,clusterId,procId,elem.text))
+            pass
   # Una marca de fin de tarea
   elif event == 'end' and elem.tag == 'c':
     if flagOK: # La tarea no presento errores
@@ -233,12 +293,24 @@ for event,elem in doc:
         totalElapsedTime = totalElapsedTime + (completionDate - jobCurrentStartDate)
       if (diskUsageRaw < diskUsage):
         diskUsed = diskUsed + diskUsageRaw
-      writer.writerow({'User': user, 'ClusterId': clusterId, \
-              'ProcId': procId, 'CompletionDate': completionDate, \
+      writer.writerow({'User': user, \
+              'CompletionDate': completionDate, \
               'JobCurrentStartDate': jobCurrentStartDate, \
-              'BytesSent': bytesSent, 'BytesRecvd': bytesRecv, \
-              'DiskUsage_RAW': diskUsageRaw, 'JobStatus': jobStatus, \
-              'LastJobStatus': lastJobStatus, 'DiskUsage': diskUsage})
+              'ClusterId': clusterId, \
+              'ProcId': procId, \
+              'BytesSent': bytesSent, \
+              'BytesRecvd': bytesRecv, \
+              'DiskUsage': diskUsage, \
+              'JobStatus': jobStatus, \
+              'LastJobStatus': lastJobStatus, \
+              'DiskUsage_RAW': diskUsageRaw,  \
+              'JobRunCount': jobRunCount, \
+              'MemoryUsage': memoryUsage, \
+              'DockerImage': dockerImage, \
+              'QDate': QDate, \
+              'CumulativeRemoteUserCpu': cumulativeRemoteUserCpu, \
+              'TransferInputSizeMB': transferInputSizeMB \
+              })
     else: # La tarea presento errores y es ignorada, se limpian todas las vars
       ignoredTasks = ignoredTasks + 1
       flagOK = True
@@ -254,6 +326,12 @@ for event,elem in doc:
     jobStatus = 0
     lastJobStatus = 0
     diskUsageRaw = 0
+    jobRunCount = 0
+    memoryUsage = 0
+    dockerImage = ""
+    QDate = 0
+    cumulativeRemoteUserCpu = 0
+    transferInputSizeMB = 0
   elem.clear()
 
 print("Numero de tareas %s BytesSent %s BytesRecv %s DiskUsed %s ElapsedTime %s"%(str(numTasks), str(totalBytesSent), str(totalBytesRecv), str(diskUsed), str(totalElapsedTime)))
