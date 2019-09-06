@@ -243,7 +243,7 @@ for event,elem in doc:
           (event, elem) = next(doc)
           # Al leer el proximo elemento se tiene algo como <i>...</i>
           try: 
-            memoryUsage = int(elem.text)
+            memoryUsage = elem.text
           except TypeError:
             flagOK = False
             errorCount = errorCount + 1
@@ -267,7 +267,7 @@ for event,elem in doc:
           (event, elem) = next(doc)
           # Al leer el proximo elemento se tiene algo como <i>...</i>
           try: 
-            cumulativeRemoteUserCpu = int(elem.text)
+            cumulativeRemoteUserCpu = float(elem.text)
           except TypeError:
             flagOK = False
             errorCount = errorCount + 1
