@@ -2,7 +2,7 @@
 #CURRENT_DIR=$(pwd)
 #CURRENT_DIR="/cluster/condor/vagrant/_extract"
 CURRENT_DATE=$( date +'%s' )
-. deploymentdir.sh
+/cluster/condor/vagrant/_extract/deploymentdir.sh
 cd ${CURRENT_DIR}
 LOGFILE="${CURRENT_DIR}/logfile.log"
 echo "[${CURRENT_DATE}] $(pwd)" >> ${LOGFILE}
