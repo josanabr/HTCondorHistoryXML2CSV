@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-#CURRENT_DIR=$(pwd)
-#CURRENT_DIR="/cluster/condor/vagrant/_extract"
+#
+# Este script se preparo para ser usado con el comando Cron.
+# La variable 'CURRENT_DIR' se debe instanciar al directorio donde esta 
+# desplegada esta herramienta.
+#
+# Author: John Sanabria
+# Date: 2019-09-09
+#
+CURRENT_DIR="/cluster/condor/vagrant/_extract"
 CURRENT_DATE=$( date +'%s' )
-/cluster/condor/vagrant/_extract/deploymentdir.sh
 cd ${CURRENT_DIR}
 LOGFILE="${CURRENT_DIR}/logfile.log"
 echo "[${CURRENT_DATE}] $(pwd)" >> ${LOGFILE}
